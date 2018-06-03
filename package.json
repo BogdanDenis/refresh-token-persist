@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "webpack",
     "test": "jest"
   },
   "repository": {
@@ -20,10 +21,16 @@
   },
   "homepage": "https://github.com/BogdanDenis/refresh-token-persist#readme",
   "devDependencies": {
-    "jest": "^23.1.0"
+    "jest": "^23.1.0",
+    "webpack-cli": "^3.0.1"
   },
   "jest": {
     "collectCoverage": true,
-    "coverageFormats": ["html"]
+    "coverageFormats": [
+      "html"
+    ]
+  },
+  "dependencies": {
+    "webpack": "^4.10.2"
   }
 }
