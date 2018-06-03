@@ -63,8 +63,8 @@ const HttpService = (function() {
 	};
 
 	const start = () => {
-		checkCallbacksExist();
-		req.start(mergedConfig.body);
+    checkCallbacksExist();
+    req.send(mergedConfig.body);
 	};
 
 	const on = (event, callback) => {
