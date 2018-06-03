@@ -1,0 +1,22 @@
+{
+  "name": "refresh-token-persist",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BogdanDenis/refresh-token-persist.git"
+  },
+  "author": {
+    "email": "denys.bohdan123@gmail.com",
+    "name": "Denys Bohdan"    
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BogdanDenis/refresh-token-persist/issues"
+  },
+  "homepage": "https://github.com/BogdanDenis/refresh-token-persist#readme"
+}
