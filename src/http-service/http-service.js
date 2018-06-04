@@ -63,7 +63,7 @@ const HttpService = (function() {
 	};
 
 	const start = () => {
-		checkCallbacksExist();
+    checkCallbacksExist();
     req.send(mergedConfig.body);
 	};
 
