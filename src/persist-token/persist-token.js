@@ -36,7 +36,8 @@ const PersistToken = (function() {
     const timeout = loadedData.timeout;
     const timeoutWithCorrection = timeout - timePassed;
     loadedData.timeout = timeoutWithCorrection;
-    start(loadedData);
+    savedOptions = Object.assign({}, loadedData);
+    start();
   };
 
 	const saveData = () => {
