@@ -8,7 +8,7 @@ const HttpService = (function() {
 		body: null,
 	};
 
-	const eventBindings = {};
+	let eventBindings = {};
 	let mergedConfig;
 	let req = null;
 

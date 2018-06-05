@@ -8,8 +8,14 @@ const STORAGE_TYPES = {
   SESSION_STORAGE: 'sessionStorage',
 };
 
+const EVENTS = {
+  SUCCESS: 'success',
+  FAIL: 'fail',
+};
+
 module.exports = {
   REQUEST_STATUSES,
   STORAGE_TYPES,
+  EVENTS,
 };
 
