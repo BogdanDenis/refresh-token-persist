@@ -15,7 +15,7 @@ const PersistToken = (function() {
         localStorage.setItem(storageKey, JSON.stringify(res));
         return;
       case supportedTypes.SESSION_STORAGE:
-        sessionStorage.setItem(storageKey, JSON.stringidy(res));
+        sessionStorage.setItem(storageKey, JSON.stringify(res));
         return;
     }
   };
@@ -36,7 +36,7 @@ const PersistToken = (function() {
     const timeout = loadedData.timeout;
     const timeoutWithCorrection = timeout - timePassed;
     loadedData.timeout = timeoutWithCorrection;
-    startRefreshing(loadedData);
+    start(loadedData);
   };
 
 	const saveData = () => {
@@ -66,10 +66,12 @@ const PersistToken = (function() {
   };
 
   const onSuccess = (res) => {
+    saveFinishedOptions();
     saveResult(res);
   };
 
   const onFail = (err) => {
+    saveFinishedOptions();
     saveResult(err);
   };
 	
@@ -78,19 +80,19 @@ const PersistToken = (function() {
         {},
         savedOptions,
         {
-          startTime: options.startTime || new Date().getTime(),
+          startTime: savedOptions.startTime || new Date().getTime(),
           status: persistConstants.REQUEST_STATUSES.OPEN,
         },
     );
 
     setTimeout(() => {
-      HttpService.create(options);
+      HttpService.create(savedOptions);
       HttpService.on(requestConstants.EVENTS.SUCCESS, onSuccess);
       HttpService.on(requestConstants.EVENTS.FAIL, onFail);
       HttpService.start();
 
-      if (options.recurring) {
-        start(options);
+      if (savedOptions.recurring) {
+        start();
       }
     }, savedOptions.timeout);
 	};
