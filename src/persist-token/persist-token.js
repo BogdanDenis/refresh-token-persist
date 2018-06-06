@@ -85,8 +85,10 @@ const PersistToken = (function() {
 
   const onSuccess = (res) => {
     saveFinishedOptions();
-    saveResult(res);
-    if (savedOptions.resultHandleTypes.indexOf(persistConstants.RESULT_PROCESS_TYPE.CALLBACK)) {
+    if (savedOptions.resultHandleTypes.indexOf(persistConstants.RESULT_PROCESS_TYPE.SAVE !== -1)) {
+      saveResult(res);
+    }
+    if (savedOptions.resultHandleTypes.indexOf(persistConstants.RESULT_PROCESS_TYPE.CALLBACK !== -1)) {
       const callback = eventBindings[persistConstants.EVENTS.SUCCESS];
       if (!callback) {
         throw new Error(`Result handle type '${persistConstants.RESULT_PROCESS_TYPE.CALLBACK}'
@@ -98,8 +100,10 @@ const PersistToken = (function() {
 
   const onFail = (err) => {
     saveFinishedOptions();
-    saveResult(err);
-    if (savedOptions.resultHandleTypes.indexOf(persistConstants.RESULT_PROCESS_TYPE.CALLBACK)) {
+    if (savedOptions.resultHandleTypes.indexOf(persistConstants.RESULT_PROCESS_TYPE.SAVE) !== -1) {
+      saveResult(err);
+    }
+    if (savedOptions.resultHandleTypes.indexOf(persistConstants.RESULT_PROCESS_TYPE.CALLBACK !== -1)) {
       const callback = eventBindings[persistConstants.EVENTS.FAIL];
       if (!callback) {
         throw new Error(`Result handle type '${persistConstants.RESULT_PROCESS_TYPE.CALLBACK}'
