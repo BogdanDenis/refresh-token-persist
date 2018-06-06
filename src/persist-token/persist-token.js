@@ -5,6 +5,9 @@ const requestConstants = require('../http-service/constants.js');
 
 const PersistToken = (function() {
   let savedOptions = null;
+  const defaultOptions = {
+    resultHandleTypes: [persistConstants.RESULT_PROCESS_TYPE.SAVE],
+  };
   const eventBindings = {};
 
   const saveResult = (res) => {
@@ -61,6 +64,7 @@ const PersistToken = (function() {
   const saveFinishedOptions = () => {
     savedOptions = Object.assign(
       {},
+      defaultOptions,
       savedOptions,
       { status: persistConstants.REQUEST_STATUSES.FINISHED },
     );
@@ -70,8 +74,12 @@ const PersistToken = (function() {
   const onSuccess = (res) => {
     saveFinishedOptions();
     saveResult(res);
-    const callback = eventBindings[persistConstants.EVENTS.SUCCESS];
-    if (callback) {
+    if (savedOptions.resultHandleTypes.indexOf(persistConstants.RESULT_PROCESS_TYPE.CALLBACK)) {
+      const callback = eventBindings[persistConstants.EVENTS.SUCCESS];
+      if (!callback) {
+        throw new Error(`Result handle type '${persistConstants.RESULT_PROCESS_TYPE.CALLBACK}'
+          was given but no '${persistConstants.EVENTS.SUCCESS}' callback was specified!`);
+      }
       callback(res);
     }
   };
@@ -79,8 +87,12 @@ const PersistToken = (function() {
   const onFail = (err) => {
     saveFinishedOptions();
     saveResult(err);
-    const callback = eventBindings[persistConstants.EVENTS.FAIL];
-    if (callback) {
+    if (savedOptions.resultHandleTypes.indexOf(persistConstants.RESULT_PROCESS_TYPE.CALLBACK)) {
+      const callback = eventBindings[persistConstants.EVENTS.FAIL];
+      if (!callback) {
+        throw new Error(`Result handle type '${persistConstants.RESULT_PROCESS_TYPE.CALLBACK}'
+          was given but no '${persistConstants.EVENTS.FAIL}' callback was specified!`);
+      }
       callback(err);
     }
   };
@@ -88,6 +100,7 @@ const PersistToken = (function() {
 	const start = () => {
     savedOptions = Object.assign(
         {},
+        defaultOptions,
         savedOptions,
         {
           startTime: savedOptions.startTime || new Date().getTime(),
