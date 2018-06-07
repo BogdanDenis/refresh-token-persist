@@ -4,12 +4,13 @@ const persistConstants = require('./constants.js');
 const requestConstants = require('../http-service/constants.js');
 
 const PersistToken = (function() {
-  let savedOptions = null;
+  let userConfig = {};
+  let internalData = {};
   const eventBindings = {};
 
   const saveResult = (res) => {
-    const storageType = savedOptions.storageType;
-    const storageKey = savedOptions.storageKey;
+    const storageType = userConfig.storageType;
+    const storageKey = userConfig.storageKey;
     const supportedTypes = persistConstants.STORAGE_TYPES;
     switch (storageType) {
       case supportedTypes.LOCAL_STORAGE:
@@ -25,24 +26,36 @@ const PersistToken = (function() {
     return Object.keys(persistConstants.STORAGE_TYPES).find(key =>
       persistConstants.STORAGE_TYPES[key] === storageType) !== null;
   };
+
+  const userConfigIsValid = (config) => {
+    const urlIsPassed = config.url && true;
+    const timeoutIsPassed = config.timeout && true;
+    return urlIsPassed && timeoutIsPassed;
+  };
   
   const loadData = () => {
-    const loadedData = StorageService.getItem();
-    if (!loadedData || loadedData.status === persistConstants.REQUEST_STATUSES.FINISHED) {
+    const loadedUserConfig = StorageService.getItem();
+    const loadedInternalData = StorageService.getItem(true);
+    console.log(loadedUserConfig, loadedInternalData);
+    if (!loadedUserConfig || !loadedInternalData ||
+        !userConfigIsValid(loadedUserConfig) ||
+        (loadedInternalData.status === persistConstants.REQUEST_STATUSES.FINISHED && !loadedUserConfig.recurring)) {
       return;
     }
     const currentTime = new Date().getTime();
-    const startTime = loadedData.startTime;
+    const startTime = loadedInternalData.startTime;
     const timePassed = currentTime - startTime;
-    const timeout = loadedData.timeout;
+    const timeout = loadedUserConfig.timeout;
     const timeoutWithCorrection = timeout - timePassed;
-    loadedData.timeout = timeoutWithCorrection;
-    savedOptions = Object.assign({}, loadedData);
+    loadedInternalData.timeout = timeoutWithCorrection < 0 ? userConfig.timeout : timeoutWithCorrection;
+    userConfig = Object.assign({}, loadedUserConfig);
+    internalData = Object.assign({}, loadedInternalData);
     start();
   };
 
 	const saveData = () => {
-    StorageService.setItem(savedOptions);
+    StorageService.setItem(userConfig);
+    StorageService.setItem(internalData, true);
   };
 
   const create = (options) => {
@@ -55,16 +68,16 @@ const PersistToken = (function() {
     if (!options.storageKey) {
       throw new Error('No key for storage was given!');
     }
-    savedOptions = Object.assign({}, options);
+    userConfig = Object.assign({}, options);
   };
 
   const saveFinishedOptions = () => {
-    savedOptions = Object.assign(
+    internalData = Object.assign(
       {},
-      savedOptions,
+      internalData,
       { status: persistConstants.REQUEST_STATUSES.FINISHED },
     );
-    StorageService.setItem(savedOptions);
+    StorageService.setItem(internalData, true);
   };
 
   const onSuccess = (res) => {
@@ -86,25 +99,30 @@ const PersistToken = (function() {
   };
 	
 	const start = () => {
-    savedOptions = Object.assign(
-        {},
-        savedOptions,
-        {
-          startTime: savedOptions.startTime || new Date().getTime(),
-          status: persistConstants.REQUEST_STATUSES.OPEN,
-        },
-    );
+	  if (!userConfigIsValid(userConfig)) {
+	    return;
+    }
 
     setTimeout(() => {
-      HttpService.create(savedOptions);
+      HttpService.create(userConfig);
       HttpService.on(requestConstants.EVENTS.SUCCESS, onSuccess);
       HttpService.on(requestConstants.EVENTS.FAIL, onFail);
       HttpService.start();
 
-      if (savedOptions.recurring) {
+      if (userConfig.recurring) {
         start();
       }
-    }, savedOptions.timeout);
+    }, internalData.timeout);
+
+    internalData = Object.assign(
+      {},
+      internalData,
+      {
+        startTime: new Date().getTime(),
+        status: persistConstants.REQUEST_STATUSES.OPEN,
+        timeout: userConfig.timeout,
+      },
+    );
 	};
 
 	const isEventTypeValid = (event) =>
