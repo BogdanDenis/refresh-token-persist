@@ -51,7 +51,7 @@ const PersistToken = (function() {
     const timeout = loadedUserConfig.timeout;
     const timeoutWithCorrection = timeout - timePassed;
     loadedInternalData.timeout = timeoutWithCorrection < 0 ? userConfig.timeout : timeoutWithCorrection;
-    userConfig = Object.assign({}, loadedUserConfig);
+    userConfig = Object.assign({}, defaultOptions, loadedUserConfig);
     internalData = Object.assign({}, loadedInternalData);
     start();
   };
@@ -71,7 +71,7 @@ const PersistToken = (function() {
     if (!options.storageKey) {
       throw new Error('No key for storage was given!');
     }
-    userConfig = Object.assign({}, options);
+    userConfig = Object.assign({}, defaultOptions, options);
   };
 
   const saveFinishedOptions = () => {
@@ -83,12 +83,20 @@ const PersistToken = (function() {
     StorageService.setItem(internalData, true);
   };
 
+  const shouldSaveToStorage = () => {
+    return userConfig.resultHandleTypes.indexOf(persistConstants.RESULT_PROCESS_TYPE.SAVE) !== -1;
+  };
+
+  const shouldCallCallback = () => {
+    return userConfig.resultHandleTypes.indexOf(persistConstants.RESULT_PROCESS_TYPE.CALLBACK) !== -1;
+  };
+
   const onSuccess = (res) => {
     saveFinishedOptions();
-    if (savedOptions.resultHandleTypes.indexOf(persistConstants.RESULT_PROCESS_TYPE.SAVE !== -1)) {
+    if (shouldSaveToStorage()) {
       saveResult(res);
     }
-    if (savedOptions.resultHandleTypes.indexOf(persistConstants.RESULT_PROCESS_TYPE.CALLBACK !== -1)) {
+    if (shouldCallCallback()) {
       const callback = eventBindings[persistConstants.EVENTS.SUCCESS];
       if (!callback) {
         throw new Error(`Result handle type '${persistConstants.RESULT_PROCESS_TYPE.CALLBACK}'
@@ -100,10 +108,10 @@ const PersistToken = (function() {
 
   const onFail = (err) => {
     saveFinishedOptions();
-    if (savedOptions.resultHandleTypes.indexOf(persistConstants.RESULT_PROCESS_TYPE.SAVE) !== -1) {
+    if (shouldSaveToStorage()) {
       saveResult(err);
     }
-    if (savedOptions.resultHandleTypes.indexOf(persistConstants.RESULT_PROCESS_TYPE.CALLBACK !== -1)) {
+    if (shouldCallCallback()) {
       const callback = eventBindings[persistConstants.EVENTS.FAIL];
       if (!callback) {
         throw new Error(`Result handle type '${persistConstants.RESULT_PROCESS_TYPE.CALLBACK}'
