@@ -20,6 +20,7 @@ For browserify, use ```npm install persist-token ```.
 	timeout: 300000 // time in ms to send request in
 	recurring: true, // try same request after previous one has finished
  });
+<<<<<<< HEAD
  PersistToken.on('success', function(res) { ... });
  PersistToken.on('fail', function(err) { ... });
  PersistToken.start();
