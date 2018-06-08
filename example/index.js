@@ -10,11 +10,18 @@ startBtn.addEventListener('click', () => {
     timeout: 2000,
     storageType: 'localStorage',
     storageKey: 'mykey',
+    resultHandleTypes: ['save', 'callback'],
     recurring: true,
   };
 
   PersistToken.create(options);
   PersistToken.start();
+  PersistToken.on('success', (res) => {
+    console.log('success', res);
+  });
+  PersistToken.on('fail', (err) => {
+    console.log('fail', err);
+  });
 });
 
 stopBtn.addEventListener('click', () => {

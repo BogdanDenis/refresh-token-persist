@@ -1,5 +1,4 @@
 const path = require('path');
-console.log(path.resolve(__dirname, 'example/build'));
 
 module.exports = {
   entry: './example/index.js',

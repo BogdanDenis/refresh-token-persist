@@ -24,23 +24,25 @@ const HttpService = (function() {
 		});
 	};
 
-	const clear = () => {
-		eventBindings = {};
-		mergedConfig = null;
-		req = null;
-	};
-
 	const readyStateChangeListener = function() {
 		if (req.readyState === 4) {
 			if (req.status >= 200 && req.status < 300) {
 				const successCallback = eventBindings[constants.EVENTS.SUCCESS];
 				if (successCallback) {
-					successCallback(req.response);
+				  const res = {
+				    code: req.status,
+            response: req.response,
+          };
+					successCallback(res);
 				}
 			} else if (req.status >= 400) {
 				const failCallback = eventBindings[constants.EVENTS.FAIL];
 				if (failCallback) {
-					failCallback(req.response);
+				  const err = {
+				    code: req.status,
+            response: req.response,
+          };
+					failCallback(err);
 				}
 			}
 		}

@@ -39,7 +39,6 @@ const PersistToken = (function() {
   const loadData = () => {
     const loadedUserConfig = StorageService.getItem();
     const loadedInternalData = StorageService.getItem(true);
-    console.log(loadedUserConfig, loadedInternalData);
     if (!loadedUserConfig || !loadedInternalData ||
         !userConfigIsValid(loadedUserConfig) ||
         (loadedInternalData.status === persistConstants.REQUEST_STATUSES.FINISHED && !loadedUserConfig.recurring)) {
