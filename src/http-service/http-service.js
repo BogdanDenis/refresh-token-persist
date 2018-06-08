@@ -1,13 +1,6 @@
 const constants = require('./constants');
 
 const HttpService = (function() {
-	const defaultConfig = {
-		url: '',
-		method: constants.METHODS.GET,
-		headers: null,
-		body: null,
-	};
-
 	let eventBindings = {};
 	let mergedConfig;
 	let req = null;
@@ -49,7 +42,7 @@ const HttpService = (function() {
 	};
 
 	const create = (config) => {
-		mergedConfig = Object.assign({}, defaultConfig, config);
+		mergedConfig = Object.assign({}, constants.DEFAULT_CONFIG, config);
 
 		req = new XMLHttpRequest();
 		req.responseType = 'json';
@@ -71,10 +64,10 @@ const HttpService = (function() {
 
 	const on = (event, callback) => {
 		if (!isEventTypeValid(event)) {
-			throw new Error('Given event type is not supported. Please, check docs for a list of event types');
+			throw new Error(constants.ERROR_MESSAGES.EVENT_NOT_SUPPORTED);
 		}
 		if (typeof callback !== 'function') {
-			throw new Error(`Second parameter must have a 'function' type!`);
+			throw new Error(constants.ERROR_MESSAGES.CALLBACK_IS_NOT_A_FUNCTION);
 		}
 		eventBindings[event] = callback;
 	};
