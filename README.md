@@ -1,5 +1,6 @@
 
 
+
 # Persist Token
 Persist Token is a library that provides a way to automatically keep your access token refreshed and up to date.
 
@@ -45,7 +46,7 @@ Parameters:
 
    * method (string): HTTP method.
 
-	   Default: ```'GET'```.
+      Default: ```'GET'```.
 
    * headers (Object): HTTP headers.
 
@@ -82,12 +83,16 @@ Adds a callback for event
 * ```callback``` (function): Callback function.
 
 **Callbacks, added via ```on()``` will NOT be re-added after page refresh.
-	Unfortunately, if you want to use callbacks, you will have to add them during app initialization.
-	Sorry :(**
+   Unfortunately, if you want to use callbacks, you will have to add them during app initialization.
+   Sorry :(**
 
 ### ```start()```
 
 Starts a request.
+
+### ```stop()```
+
+Stops sending requests. You can start sending requests with the same configuration again by calling ```start()```.
 
 ## Author
 

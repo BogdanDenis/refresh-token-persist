@@ -53,7 +53,7 @@ const PersistToken = (function() {
     loadedInternalData.timeout = timeoutWithCorrection < 0 ? userConfig.timeout : timeoutWithCorrection;
     userConfig = Object.assign({}, defaultOptions, loadedUserConfig);
     internalData = Object.assign({}, loadedInternalData);
-    start();
+    _start();
   };
 
 	const saveData = () => {
@@ -120,20 +120,24 @@ const PersistToken = (function() {
       callback(err);
     }
   };
-	
-	const start = () => {
-	  if (!userConfigIsValid(userConfig)) {
-	    return;
+
+  const _start = () => {
+    if (!userConfigIsValid(userConfig)) {
+      return;
     }
 
     setTimeout(() => {
+      if (internalData.stopped) {
+        return;
+      }
+
       HttpService.create(userConfig);
       HttpService.on(requestConstants.EVENTS.SUCCESS, onSuccess);
       HttpService.on(requestConstants.EVENTS.FAIL, onFail);
       HttpService.start();
 
       if (userConfig.recurring) {
-        start();
+        _start();
       }
     }, internalData.timeout);
 
@@ -146,6 +150,15 @@ const PersistToken = (function() {
         timeout: userConfig.timeout,
       },
     );
+  };
+	
+	const start = () => {
+	  internalData = Object.assign(
+      {},
+      internalData,
+      { stopped: false },
+    );
+	  _start();
 	};
 
 	const isEventTypeValid = (event) =>
@@ -161,6 +174,14 @@ const PersistToken = (function() {
     eventBindings[event] = callback;
   };
 
+	const stop = () => {
+	  internalData = Object.assign(
+      {},
+      internalData,
+      { stopped: true },
+    );
+  };
+
   window.addEventListener('load', loadData);
   window.addEventListener('beforeunload', saveData);
 
@@ -168,6 +189,7 @@ const PersistToken = (function() {
     create,
     start,
     on,
+    stop,
   };
 }());
 
