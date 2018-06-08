@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack",
-    "test": "jest",
+    "test": "jest --env=jsdom --config jest.config.json",
+    "coverage": "jest --env=jsdom --config jest.config.json --coverage",
     "example": "webpack-dev-server --config ./example/webpack.config.example.js --open"
   },
   "repository": {
@@ -23,9 +24,11 @@
   "homepage": "https://github.com/BogdanDenis/refresh-token-persist#readme",
   "devDependencies": {
     "jest": "^23.1.0",
+    "raf": "^3.4.0",
+    "sinon": "^5.1.0",
+    "webpack": "^4.10.2",
     "webpack-cli": "^3.0.1",
-    "webpack-dev-server": "^3.1.4",
-    "webpack": "^4.10.2"
+    "webpack-dev-server": "^3.1.4"
   },
   "jest": {
     "collectCoverage": true,

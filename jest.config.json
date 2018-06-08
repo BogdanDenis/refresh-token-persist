@@ -1,0 +1,15 @@
+{
+  "collectCoverageFrom": [
+    "src/**/*.{js}"
+  ],
+  "testMatch": [
+    "<rootDir>/src/**/__tests__/**/*.{js}",
+    "<rootDir>/src/**/?(*.)(spec|test).{js}"
+  ],
+  "testEnvironment": "node",
+  "testURL": "http://localhost",
+  "transform": {
+    "^.+\\.js$": "babel-jest"
+  },
+  "setupFiles": ["raf/polyfill"]
+}
