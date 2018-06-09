@@ -1,7 +1,7 @@
 {
-  "name": "refresh-token-persist",
-  "version": "1.0.0",
-  "description": "",
+  "name": "persist-refresh-token",
+  "version": "0.1.0",
+  "description": "Small library to keep your access token up to date.",
   "main": "index.js",
   "scripts": {
     "build": "webpack",
@@ -13,11 +13,16 @@
     "type": "git",
     "url": "git+https://github.com/BogdanDenis/refresh-token-persist.git"
   },
+  "keywords": [
+    "token",
+    "refresh",
+    "persist"
+  ],
   "author": {
     "email": "denys.bohdan123@gmail.com",
     "name": "Denys Bohdan"
   },
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/BogdanDenis/refresh-token-persist/issues"
   },
