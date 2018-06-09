@@ -45,7 +45,7 @@ const PersistToken = (function() {
     if (!loadedUserConfig || !loadedInternalData ||
         !userConfigIsValid(loadedUserConfig) ||
         (loadedInternalData.status === persistConstants.REQUEST_STATUSES.FINISHED && !loadedUserConfig.recurring)) {
-      return;
+      return false;
     }
     const currentTime = new Date().getTime();
     const startTime = loadedInternalData.startTime;
@@ -55,7 +55,13 @@ const PersistToken = (function() {
     loadedInternalData.timeout = timeoutWithCorrection < 0 ? userConfig.timeout : timeoutWithCorrection;
     userConfig = Object.assign({}, defaultOptions, loadedUserConfig);
     internalData = Object.assign({}, loadedInternalData);
-    _start();
+    return true;
+  };
+
+  const init = () => {
+    if (loadData()) {
+      _start();
+    }
   };
 
 	const saveData = () => {
@@ -182,7 +188,7 @@ const PersistToken = (function() {
     );
   };
 
-  window.addEventListener('load', loadData);
+  window.addEventListener('load', init);
   window.addEventListener('beforeunload', saveData);
 
 	return {

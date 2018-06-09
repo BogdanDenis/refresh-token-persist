@@ -102,7 +102,7 @@ describe('PersistToken', () => {
 		}, 1200);
 	});
 
-	it(`should throw 'weong event type' error`, () => {
+	it(`should throw 'wrong event type' error`, () => {
 		expect(() => PersistToken.on()).toThrow(constants.ERROR_MESSAGES.WRONG_EVENT_TYPE);
 	});
 
