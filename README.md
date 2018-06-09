@@ -8,11 +8,11 @@ Persist Token is a library that provides a way to automatically keep your access
 None
 
 ## Installation
-For browserify, use ```npm install persist-token ```.
+For browserify, use ```npm install persist-refresh-token ```.
 
 ## Usage
  ```javascript
- var PersistToken = require('persist-token');
+ var PersistToken = require('persist-refresh-token');
 
  PersistToken.create({
    url: 'some url',
