@@ -1,18 +1,18 @@
 
 
 
-# Persist Token
-Persist Token is a library that provides a way to automatically keep your access token refreshed and up to date.
+# KeepItRefreshed
+KeepItRefreshed is a library that provides a way to automatically keep your access token refreshed and up to date.
 
 ## Dependencies
 None
 
 ## Installation
-For browserify, use ```npm install persist-refresh-token ```.
+For browserify, use ```npm install keep-it-refreshed ```.
 
 ## Usage
  ```javascript
- var PersistToken = require('persist-refresh-token');
+ var PersistToken = require('keep-it-refreshed');
 
  PersistToken.create({
    url: 'some url',

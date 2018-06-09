@@ -1,6 +1,6 @@
 {
-  "name": "persist-refresh-token",
-  "version": "0.1.0",
+  "name": "keep-it-refreshed",
+  "version": "0.1.1",
   "description": "Small library to keep your access token up to date.",
   "main": "index.js",
   "scripts": {
