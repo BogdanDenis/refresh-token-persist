@@ -26,14 +26,17 @@ const PersistToken = (function() {
   };
 
   const storageTypeIsSupported = (storageType) => {
-    return Object.keys(persistConstants.STORAGE_TYPES).find(key =>
-      persistConstants.STORAGE_TYPES[key] === storageType) !== null;
+    return Object.values(persistConstants.STORAGE_TYPES).indexOf(storageType) !== -1;
   };
 
   const userConfigIsValid = (config) => {
-    const urlIsPassed = config.url && true;
-    const timeoutIsPassed = config.timeout && true;
-    return urlIsPassed && timeoutIsPassed;
+    if (!config.url) {
+      throw new Error(persistConstants.ERROR_MESSAGES.NO_URL_PASSED);
+    }
+    if (!config.timeout) {
+      throw new Error(persistConstants.ERROR_MESSAGES.NO_TIMEOUT_PASSED);
+    }
+    return true;
   };
   
   const loadData = () => {
@@ -62,13 +65,13 @@ const PersistToken = (function() {
 
   const create = (options) => {
     if (!options) {
-      throw new Error('No options were passed as argument!');
+      throw new Error(persistConstants.ERROR_MESSAGES.NO_OPTIONS);
     }
     if (!storageTypeIsSupported(options.storageType)) {
-      throw new Error('Given storage type is not supported! Please check docs for a list of supported storage types.');
+      throw new Error(persistConstants.ERROR_MESSAGES.WRONG_STORAGE_TYPE);
     }
     if (!options.storageKey) {
-      throw new Error('No key for storage was given!');
+      throw new Error(persistConstants.ERROR_MESSAGES.NO_STORAGE_KEY);
     }
     userConfig = Object.assign({}, defaultOptions, options);
   };
@@ -98,8 +101,7 @@ const PersistToken = (function() {
     if (shouldCallCallback()) {
       const callback = eventBindings[persistConstants.EVENTS.SUCCESS];
       if (!callback) {
-        throw new Error(`Result handle type '${persistConstants.RESULT_PROCESS_TYPE.CALLBACK}'
-          was given but no '${persistConstants.EVENTS.SUCCESS}' callback was specified!`);
+        throw new Error(persistConstants.ERROR_MESSAGES.NO_CALLBACK(persistConstants.EVENTS.SUCCESS));
       }
       callback(res);
     }
@@ -113,8 +115,7 @@ const PersistToken = (function() {
     if (shouldCallCallback()) {
       const callback = eventBindings[persistConstants.EVENTS.FAIL];
       if (!callback) {
-        throw new Error(`Result handle type '${persistConstants.RESULT_PROCESS_TYPE.CALLBACK}'
-          was given but no '${persistConstants.EVENTS.FAIL}' callback was specified!`);
+        throw new Error(persistConstants.ERROR_MESSAGES.NO_CALLBACK(persistConstants.EVENTS.FAIL));
       }
       callback(err);
     }
@@ -165,10 +166,10 @@ const PersistToken = (function() {
 
 	const on = (event, callback) => {
     if (!isEventTypeValid(event)) {
-      throw new Error('Given event type is not supported. Please, check docs for a list of event types');
+      throw new Error(persistConstants.ERROR_MESSAGES.WRONG_EVENT_TYPE);
     }
     if (typeof callback !== 'function') {
-      throw new Error(`Second parameter must have a 'function' type!`);
+      throw new Error(persistConstants.ERROR_MESSAGES.NOT_A_FUNCTION);
     }
     eventBindings[event] = callback;
   };
