@@ -13,7 +13,7 @@ const EVENTS = {
   FAIL: 'fail',
 };
 
-const RESULT_PROCESS_TYPE = {
+const RESULT_PROCESS_TYPES = {
   SAVE: 'save',
   CALLBACK: 'callback',
 };
@@ -22,6 +22,6 @@ module.exports = {
   REQUEST_STATUSES,
   STORAGE_TYPES,
   EVENTS,
-  RESULT_PROCESS_TYPE,
+  RESULT_PROCESS_TYPES,
 };
 

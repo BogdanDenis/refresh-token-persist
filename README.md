@@ -1,35 +1,35 @@
-
-
-
-# Persist Token
-Persist Token is a library that provides a way to automatically keep your access token refreshed and up to date.
+# Keep It Refreshed
+Keep It Refreshed is a library that provides a way to keep sending refresh token requests even after page reload.
 
 ## Dependencies
 None
 
 ## Installation
-For browserify, use ```npm install persist-token ```.
+For browserify, use ```npm install keep-it-refreshed ```.
 
 ## Usage
  ```javascript
- var PersistToken = require('persist-token');
+ var KeepItRefreshed = require('keep-it-refreshed');
 
- PersistToken.create({
+ KeepItRefreshed.PersistToken.create({
    url: 'some url',
    method: 'GET',
    headers = { ... },
    body: 'some data',
-   storageType: 'localStorage',
+   storageType: KeepItRefreshed.STORAGE_TYPES.LOCAL_STORAGE,
    storageKey: 'key',
-   resultHandleTypes: ['save', 'callback'],
+   resultHandleTypes: [
+	   KeepItRefreshed.RESULT_PROCESS_TYPES.SAVE,
+	   KeepItRefreshed.RESULT_PROCESS_TYPES.CALLBACK,
+   ],
    timeout: 300000 // time in ms to send request in
    recurring: true, // try same request after previous one has finished
  });
 
- PersistToken.on('success', function(res) { ... });
- PersistToken.on('fail', function(err) { ... });
+ KeepItRefreshed.PersistToken.on(KeepItRefreshed.EVENTS.SUCCESS, function(res) { ... });
+ KeepItRefreshed.PersistToken.on(KeepItRefreshed.EVENTS.FAIL, function(err) { ... });
 
- PersistToken.start();
+ KeepItRefreshed.PersistToken.start();
 ```
 
 ## API
@@ -54,19 +54,19 @@ Parameters:
 
       **PersistToken does not modify the given body in any way**
    * timeout (number): Time in milliseconds, after which PersistToken will send an HTTP request.
-   * storageType (string): Type of storage request response will be saved in.
+   * storageType (STORAGE_TYPES): Type of storage request response will be saved in.
 
       *Available types:*
-      - ```localStorage```
-      - ```sessionStorage```
+      - ```LOCAL_STORAGE```
+      - ```SESSION_STORAGE```
    * storageKey (string): A key, under which request response will be saved in a specified by ```storageType``` storage.
-   * resultHandleTypes (Array[string]): Parameter to specify how request result will be handled.
+   * resultHandleTypes (Array[RESULT_PROCESS_TYPES]): Parameter to specify how request result will be handled.
 
       *Available types:*
-      - ```'save'```: save response to storage
-      - ```'callback'```: call an added callback with response
+      - ```SAVE```: save response to storage
+      - ```CALLBACK```: call an added callback with response
 
-      Default: ```['save']```.
+      Default: ```[SAVE]```.
    * recurring (bool): If set to ```true```, then after a request finishes the same request will be sent again.
 
 ### ```on(event, callback)```
@@ -75,11 +75,11 @@ Adds a callback for event
 
 #### Arguments
 
-* ```event``` (string): Name of event.
+* ```event``` (EVENTS): Name of event.
 
    *Available events:*
-   - ```'success'```: function (result) - Raised after a successful request (status in 200 range).
-   - ```'fail'```: function (error) - Raised after a failed request (status >= 400).
+   - ```SUCCESS```: function (result) - Raised after a successful request (status in 200 range).
+   - ```FAIL```: function (error) - Raised after a failed request (status >= 400).
 * ```callback``` (function): Callback function.
 
 **Callbacks, added via ```on()``` will NOT be re-added after page refresh.
