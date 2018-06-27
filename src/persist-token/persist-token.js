@@ -7,7 +7,7 @@ const PersistToken = (function() {
   let userConfig = {};
   let internalData = {};
   const defaultOptions = {
-    resultHandleTypes: [persistConstants.RESULT_PROCESS_TYPE.SAVE],
+    resultHandleTypes: [persistConstants.RESULT_PROCESS_TYPES.SAVE],
   };
   const eventBindings = {};
 
@@ -92,11 +92,11 @@ const PersistToken = (function() {
   };
 
   const shouldSaveToStorage = () => {
-    return userConfig.resultHandleTypes.indexOf(persistConstants.RESULT_PROCESS_TYPE.SAVE) !== -1;
+    return userConfig.resultHandleTypes.indexOf(persistConstants.RESULT_PROCESS_TYPES.SAVE) !== -1;
   };
 
   const shouldCallCallback = () => {
-    return userConfig.resultHandleTypes.indexOf(persistConstants.RESULT_PROCESS_TYPE.CALLBACK) !== -1;
+    return userConfig.resultHandleTypes.indexOf(persistConstants.RESULT_PROCESS_TYPES.CALLBACK) !== -1;
   };
 
   const onSuccess = (res) => {
@@ -199,4 +199,9 @@ const PersistToken = (function() {
   };
 }());
 
-module.exports = PersistToken;
+module.exports = {
+  PersistToken,
+  STORAGE_TYPES: persistConstants.STORAGE_TYPES,
+  EVENTS: persistConstants.EVENTS,
+  RESULT_PROCESS_TYPE: persistConstants.RESULT_PROCESS_TYPES,
+};
