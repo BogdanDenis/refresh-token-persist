@@ -1,20 +1,20 @@
-const StorageService = require('../storage-service/storage-service');
-const HttpService = require('../http-service/http-service');
-const persistConstants = require('./constants.js');
-const requestConstants = require('../http-service/constants.js');
+var StorageService = require('../storage-service/storage-service');
+var HttpService = require('../http-service/http-service');
+var persistConstants = require('./constants.js');
+var requestConstants = require('../http-service/constants.js');
 
-const PersistToken = (function() {
-  let userConfig = {};
-  let internalData = {};
-  const defaultOptions = {
+var PersistToken = (function() {
+  var userConfig = {};
+  var internalData = {};
+  var defaultOptions = {
     resultHandleTypes: [persistConstants.RESULT_PROCESS_TYPES.SAVE],
   };
-  const eventBindings = {};
+  var eventBindings = {};
 
-  const saveResult = (res) => {
-    const storageType = userConfig.storageType;
-    const storageKey = userConfig.storageKey;
-    const supportedTypes = persistConstants.STORAGE_TYPES;
+  function saveResult(res) {
+    var storageType = userConfig.storageType;
+    var storageKey = userConfig.storageKey;
+    var supportedTypes = persistConstants.STORAGE_TYPES;
     switch (storageType) {
       case supportedTypes.LOCAL_STORAGE:
         localStorage.setItem(storageKey, JSON.stringify(res));
@@ -23,13 +23,18 @@ const PersistToken = (function() {
         sessionStorage.setItem(storageKey, JSON.stringify(res));
         return;
     }
-  };
+  }
 
-  const storageTypeIsSupported = (storageType) => {
-    return Object.values(persistConstants.STORAGE_TYPES).indexOf(storageType) !== -1;
-  };
+  function storageTypeIsSupported(storageType) {
+    var keys = Object.keys(persistConstants.STORAGE_TYPES);
+    var values = [];
+    for (var i = 0; i < keys.length; i++) {
+      values.push(persistConstants.STORAGE_TYPES[keys[i]]);
+    }
+    return values.indexOf(storageType) !== -1;
+  }
 
-  const userConfigIsValid = (config) => {
+  function userConfigIsValid(config) {
     if (!config.url) {
       throw new Error(persistConstants.ERROR_MESSAGES.NO_URL_PASSED);
     }
@@ -37,39 +42,39 @@ const PersistToken = (function() {
       throw new Error(persistConstants.ERROR_MESSAGES.NO_TIMEOUT_PASSED);
     }
     return true;
-  };
+  }
   
-  const loadData = () => {
-    const loadedUserConfig = StorageService.getItem();
-    const loadedInternalData = StorageService.getItem(true);
+  function loadData() {
+    var loadedUserConfig = StorageService.getItem();
+    var loadedInternalData = StorageService.getItem(true);
     if (!loadedUserConfig || !loadedInternalData ||
         !userConfigIsValid(loadedUserConfig) ||
         (loadedInternalData.status === persistConstants.REQUEST_STATUSES.FINISHED && !loadedUserConfig.recurring)) {
       return false;
     }
-    const currentTime = new Date().getTime();
-    const startTime = loadedInternalData.startTime;
-    const timePassed = currentTime - startTime;
-    const timeout = loadedUserConfig.timeout;
-    const timeoutWithCorrection = timeout - timePassed;
+    var currentTime = new Date().getTime();
+    var startTime = loadedInternalData.startTime;
+    var timePassed = currentTime - startTime;
+    var timeout = loadedUserConfig.timeout;
+    var timeoutWithCorrection = timeout - timePassed;
     loadedInternalData.timeout = timeoutWithCorrection < 0 ? userConfig.timeout : timeoutWithCorrection;
     userConfig = Object.assign({}, defaultOptions, loadedUserConfig);
     internalData = Object.assign({}, loadedInternalData);
     return true;
-  };
+  }
 
-  const init = () => {
+  function init() {
     if (loadData()) {
       _start();
     }
-  };
+  }
 
-	const saveData = () => {
+  function saveData() {
     StorageService.setItem(userConfig);
     StorageService.setItem(internalData, true);
-  };
+  }
 
-  const create = (options) => {
+  function create(options) {
     if (!options) {
       throw new Error(persistConstants.ERROR_MESSAGES.NO_OPTIONS);
     }
@@ -80,59 +85,59 @@ const PersistToken = (function() {
       throw new Error(persistConstants.ERROR_MESSAGES.NO_STORAGE_KEY);
     }
     userConfig = Object.assign({}, defaultOptions, options);
-  };
+  }
 
-  const saveFinishedOptions = () => {
+  function saveFinishedOptions() {
     internalData = Object.assign(
       {},
       internalData,
-      { status: persistConstants.REQUEST_STATUSES.FINISHED },
+      { status: persistConstants.REQUEST_STATUSES.FINISHED }
     );
     StorageService.setItem(internalData, true);
-  };
+  }
 
-  const shouldSaveToStorage = () => {
+  function shouldSaveToStorage() {
     return userConfig.resultHandleTypes.indexOf(persistConstants.RESULT_PROCESS_TYPES.SAVE) !== -1;
-  };
+  }
 
-  const shouldCallCallback = () => {
+  function shouldCallCallback() {
     return userConfig.resultHandleTypes.indexOf(persistConstants.RESULT_PROCESS_TYPES.CALLBACK) !== -1;
-  };
+  }
 
-  const onSuccess = (res) => {
+  function onSuccess(res) {
     saveFinishedOptions();
     if (shouldSaveToStorage()) {
       saveResult(res);
     }
     if (shouldCallCallback()) {
-      const callback = eventBindings[persistConstants.EVENTS.SUCCESS];
+      var callback = eventBindings[persistConstants.EVENTS.SUCCESS];
       if (!callback) {
         throw new Error(persistConstants.ERROR_MESSAGES.NO_CALLBACK(persistConstants.EVENTS.SUCCESS));
       }
       callback(res);
     }
-  };
+  }
 
-  const onFail = (err) => {
+  function onFail(err) {
     saveFinishedOptions();
     if (shouldSaveToStorage()) {
       saveResult(err);
     }
     if (shouldCallCallback()) {
-      const callback = eventBindings[persistConstants.EVENTS.FAIL];
+      var callback = eventBindings[persistConstants.EVENTS.FAIL];
       if (!callback) {
         throw new Error(persistConstants.ERROR_MESSAGES.NO_CALLBACK(persistConstants.EVENTS.FAIL));
       }
       callback(err);
     }
-  };
+  }
 
-  const _start = () => {
+  function _start() {
     if (!userConfigIsValid(userConfig)) {
       return;
     }
 
-    setTimeout(() => {
+    setTimeout(function() {
       if (internalData.stopped) {
         return;
       }
@@ -154,23 +159,29 @@ const PersistToken = (function() {
         startTime: new Date().getTime(),
         status: persistConstants.REQUEST_STATUSES.OPEN,
         timeout: userConfig.timeout,
-      },
+      }
     );
   };
 	
-	const start = () => {
+	function start() {
 	  internalData = Object.assign(
       {},
       internalData,
-      { stopped: false },
+      { stopped: false }
     );
 	  _start();
-	};
+	}
 
-	const isEventTypeValid = (event) =>
-    Object.values(persistConstants.EVENTS).indexOf(event) !== -1;
+	function isEventTypeValid(event) {
+    var keys = Object.keys(persistConstants.EVENTS);
+    var values = [];
+    for (var i = 0; i < keys.length; i++) {
+      values.push(persistConstants.EVENTS[keys[i]]);
+    }
+	  return values.indexOf(event) !== -1;
+  }
 
-	const on = (event, callback) => {
+	function on(event, callback) {
     if (!isEventTypeValid(event)) {
       throw new Error(persistConstants.ERROR_MESSAGES.WRONG_EVENT_TYPE);
     }
@@ -178,29 +189,29 @@ const PersistToken = (function() {
       throw new Error(persistConstants.ERROR_MESSAGES.NOT_A_FUNCTION);
     }
     eventBindings[event] = callback;
-  };
+  }
 
-	const stop = () => {
+	function stop() {
 	  internalData = Object.assign(
       {},
       internalData,
-      { stopped: true },
+      { stopped: true }
     );
-  };
+  }
 
   window.addEventListener('load', init);
   window.addEventListener('beforeunload', saveData);
 
 	return {
-    create,
-    start,
-    on,
-    stop,
+    create: create,
+    start: start,
+    on: on,
+    stop: stop,
   };
 }());
 
 module.exports = {
-  PersistToken,
+  PersistToken: PersistToken,
   STORAGE_TYPES: persistConstants.STORAGE_TYPES,
   EVENTS: persistConstants.EVENTS,
   RESULT_PROCESS_TYPE: persistConstants.RESULT_PROCESS_TYPES,

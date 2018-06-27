@@ -1,7 +1,7 @@
 const sinon = require('sinon');
 
 const constants = require('./constants');
-const PersistToken = require('./persist-token');
+const PersistToken = require('./persist-token').PersistToken;
 const HttpService = require('../http-service/http-service');
 
 jest.mock('../http-service/http-service.js', () => ({

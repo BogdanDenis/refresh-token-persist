@@ -1,26 +1,26 @@
-const constants = require('./constants');
+var constants = require('./constants');
 
-const StorageService = (function() {
-	const getItem = (internal) => {
-		const storage = localStorage.getItem(internal ?
+var StorageService = (function() {
+	var getItem = function(internal) {
+		var storage = localStorage.getItem(internal ?
       constants.INTERNAL_STORAGE_KEY : constants.USER_STORAGE_KEY);
 		return storage ? JSON.parse(storage) : null;
 	};
 
-	const setItem = (item, internal) => {
+	var setItem = function(item, internal) {
 		localStorage.setItem(internal ?
       constants.INTERNAL_STORAGE_KEY : constants.USER_STORAGE_KEY, JSON.stringify(item));
 	};
 
-	const removeItem = (internal) => {
+	var removeItem = function(internal) {
 		localStorage.removeItem(internal ?
       constants.INTERNAL_STORAGE_KEY : constants.USER_STORAGE_KEY);
 	};
 
 	return {
-		getItem,
-		setItem,
-		removeItem,
+		getItem: getItem,
+		setItem: setItem,
+		removeItem: removeItem,
 	};
 }());
 
